@@ -1,33 +1,25 @@
 #include <xc.h>
 __PROG_CONFIG(1, 0x184);
 
-static inline void tmr1_isr(void)
+void __interrupt() isr(void)
 {
-	static char sync = 1;
-	if (sync == 0) {
-		PORTC = 0x00;
+	// statements in this order due to timing
+	TMR1IF = 0;
+	if (PORTC & 0x08) {
 		T1CON = 0x30;
 		TMR1H = 0xFF;
-		TMR1L = 0xFF - 0x07;
+		TMR1L = 0xFF - 0x0C;
 		T1CON = 0x31;
-		sync = 1;
+		PORTC = 0x00;
 	}
 	else {
-		// statements in this order due to timing
-		sync = 0;
-		T1CON = 0x30;
+		NOP();
 		PORTC = 0x08;
+		T1CON = 0x30;
+		__delay_us(2);
 		TMR1H = 0xFF - 0x10;
-		TMR1L = 0xFF - 0x2B;
+		TMR1L = 0xFF - 0x2A;
 		T1CON = 0x31;
-	}
-}
-
-void __interrupt isr(void)
-{
-	if (TMR1IF == 1) {
-		tmr1_isr();
-		TMR1IF = 0;
 	}
 }
 
@@ -36,6 +28,7 @@ void main(void)
 	OSCCON = 0x70;
 	while ((OSCCON & 0x4) == 0);
 
+	ANSEL = 0x00;
 	TRISC = 0xF7;
 	PORTC = 0x08;
 
@@ -49,6 +42,8 @@ void main(void)
 	CCPR1L = 0x04;
 	PWM1CON = 0x01;
 	TMR2IF = 0;
+	__delay_us(6);
+	NOP();
 	T2CON = 0x04;
 	while (TMR2IF == 0);
 	TRISC = 0xC7;
