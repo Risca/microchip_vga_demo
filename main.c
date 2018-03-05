@@ -29,6 +29,8 @@ void main(void)
 	while ((OSCCON & 0x4) == 0);
 
 	ANSEL = 0x00;
+	TRISA = 0xF8;
+	PORTA = 0x07;
 	TRISC = 0xF7;
 	PORTC = 0x08;
 
@@ -38,11 +40,11 @@ void main(void)
 	T1CON = 0x31;
 
 	PR2 = 63;
-	CCP1CON = 0xBE;
-	CCPR1L = 0x04;
-	PWM1CON = 0x01;
+	CCP1CON = 0xBF;
+	CCPR1L = 0x07;
+	PWM1CON = 0;
 	TMR2IF = 0;
-	__delay_us(6);
+	__delay_us(7);
 	NOP();
 	T2CON = 0x04;
 	while (TMR2IF == 0);
