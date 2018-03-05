@@ -52,7 +52,27 @@ void main(void)
 
 	INTCON = 0xC0;
 
+#define START_OFFSET 119
 	while (1) {
+		__delay_us(START_OFFSET);
+
+		for (int i = 1; i < 51; ++i) {
+			__delay_us(5);
+			PORTA = i >> 2;
+			__delay_us(10);
+			PORTA = 0;
+			__delay_us(9);
+			NOP();
+
+			__delay_us(5);
+			PORTA = i >> 2;
+			__delay_us(10);
+			PORTA = 0;
+			NOP();
+		}
+
+		__delay_ms(12);
+		__delay_us(1389 - START_OFFSET);
 	}
 }
 
