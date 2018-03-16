@@ -3,9 +3,13 @@ __PROG_CONFIG(1, 0x184);
 
 enum Scene {
 	SCENE_BOX,
+	SCENE_RED,
+	SCENE_GREEN,
 	SCENE_BLUE,
 };
-enum Scene g_CurrentScene = SCENE_BOX;
+static enum Scene g_CurrentScene = SCENE_BOX;
+static enum Scene g_NextScene = SCENE_RED;
+static unsigned char g_FrameCount = 0;
 
 void __interrupt() isr(void)
 {
@@ -31,11 +35,19 @@ void __interrupt() isr(void)
 
 void draw_box(void)
 {
+	// delay 35 lines - VSYNC + back porch - switch-case
+	__delay_ms(1);
+	__delay_us(32);
+	__delay_us(15);
+
+	asm("bcf	status, 5"); // RP0=0, select bank0
 	asm("movlw	7");
 	asm("movwf	5");
 	__delay_us(30);
-	asm("nop");
 	asm("clrf	5");
+	asm("nop");
+	__delay_us(32);
+	__delay_us(32);
 
 #define START_OFFSET 320
 	__delay_us(START_OFFSET);
@@ -75,7 +87,7 @@ void draw_box(void)
 	}
 
 	__delay_ms(12);
-	__delay_us(1216 - START_OFFSET);
+	__delay_us(1214 - START_OFFSET);
 	__delay_us(32);
 	__delay_us(32);
 
@@ -89,15 +101,76 @@ void draw_box(void)
 	__delay_us(14);
 	asm("nop");
 	asm("clrf	5");
+
+	asm("nop");
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(10);
+}
+
+void red_screen(void)
+{
+	// delay 35 lines - VSYNC + back porch - switch-case
+	__delay_ms(1);
+	__delay_us(123);
+	asm("nop");
+
+	asm("movlw	1");
+	asm("movwf	5");
+	__delay_ms(15);
+	__delay_us(350);
+	asm("clrf	5");
+
+	asm("nop");
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(6);
+}
+
+void green_screen(void)
+{
+	// delay 35 lines - VSYNC + back porch - switch-case
+	__delay_ms(1);
+	__delay_us(123);
+	asm("nop");
+
+	asm("movlw	2");
+	asm("movwf	5");
+	__delay_ms(15);
+	__delay_us(350);
+	asm("clrf	5");
+
+	asm("nop");
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(6);
 }
 
 void blue_screen(void)
 {
+	// delay 35 lines - VSYNC + back porch - switch-case
+	__delay_ms(1);
+	__delay_us(123);
+	asm("nop");
+
 	asm("movlw	4");
 	asm("movwf	5");
 	__delay_ms(15);
 	__delay_us(350);
 	asm("clrf	5");
+
+	asm("nop");
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(32);
+	__delay_us(6);
 }
 
 void main(void)
@@ -133,28 +206,32 @@ void main(void)
 	__delay_us(365);
 	NOP();
 	while (1) {
-		// delay 35 lines - VSYNC + back porch - switch-case
-		__delay_ms(1);
-		__delay_us(123);
-		asm("nop");
-
-		switch (g_CurrentScene) {
+		switch (g_CurrentScene & 0x03) {
 		case SCENE_BOX:
 			draw_box();
 			break;
+		case SCENE_RED:
+			red_screen();
+			break;
+		case SCENE_GREEN:
+			green_screen();
+			break;
 		case SCENE_BLUE:
 			blue_screen();
+			NOP();
+			NOP();
 			break;
 		}
-		asm("nop");
-		__delay_us(32);
-		__delay_us(32);
-		__delay_us(32);
-		__delay_us(32);
-		__delay_us(32);
-		__delay_us(32);
-		__delay_us(32);
-		__delay_us(7); // front porch
+		asm("incf	_g_FrameCount");
+		if (g_FrameCount == 120) {
+			asm("incf	_g_CurrentScene");
+			asm("clrf	_g_FrameCount");
+			asm("nop");
+			asm("nop");
+		}
+		else {
+			asm("nop");
+		}
 	}
 }
 
