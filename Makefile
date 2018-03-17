@@ -1,8 +1,8 @@
 FREQ=8000000
-CC=xc8
+AS=gpasm
+LD=gplink
 BUILDDIR=build
-CFLAGS=--chip=16f684 -D_XTAL_FREQ=$(FREQ) --outdir=$(BUILDDIR)/
-SRC=main.c
+SRC=main.asm
 
 .PHONY: all program clean
 
@@ -11,8 +11,11 @@ all: $(BUILDDIR)/main.hex
 program: $(BUILDDIR)/main.hex
 	../usb_pickit_1.6.2-dh/usb_pickit -p $<
 
-$(BUILDDIR)/main.hex: $(SRC) Makefile | $(BUILDDIR)
-	$(CC) $(CFLAGS) $(filter %.c, $<)
+$(BUILDDIR)/main.hex: $(BUILDDIR)/main.o Makefile | $(BUILDDIR)
+	$(LD) $(filter %.o, $<) -o $@
+
+$(BUILDDIR)/main.o: $(SRC) Makefile | $(BUILDDIR)
+	$(AS) -c $(filter %.asm, $<) -o $@
 
 $(BUILDDIR):
 	mkdir -p $@
