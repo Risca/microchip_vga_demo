@@ -227,10 +227,9 @@ SameScene
 	goto ShowFrame
 
 PrintSingleColorScreen
-	; __delay_ms(1)
 	movlw	D'3'
 	movwf	g_WaitCount2
-	movlw	D'151'
+	movlw	D'140'
 	movwf	g_WaitCount1
 u187
 	decfsz	g_WaitCount1, f
@@ -238,14 +237,11 @@ u187
 	decfsz	g_WaitCount2, f
 	goto	u187
 
-	; __delay_us(123)
-	movlw	D'81'
+	movlw	D'78'
 	movwf	g_WaitCount1
 u197
 	decfsz	g_WaitCount1, f
 	goto	u197
-	nop
-	nop
 
 	movf	g_ScreenColor, w
 	movwf	PORTA
