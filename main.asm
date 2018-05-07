@@ -36,22 +36,21 @@ SetSyncLow:
 	movwf	T1CON
 	movlw	0xff
 	movwf	TMR1H
-	movlw	0xF3
+	bcf	PORTC,3
+	movlw	0xF2
 	movwf	TMR1L
 	movlw	0x31
 	movwf	T1CON
-	clrf	PORTC
 	goto	EndIsr
 
 SetSyncHigh:
-	movlw	0x08
-	movwf	PORTC
+	bsf	PORTC,3
 	movlw	0x30
 	movwf	T1CON
 	movlw	0xEF
 	banksel TMR1H
 	movwf	TMR1H
-	movlw	0xD5
+	movlw	0xDF
 	movwf	TMR1L
 	movlw	0x31
 	movwf	T1CON
