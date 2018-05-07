@@ -31,7 +31,7 @@ isr
 	btfss	PORTC, 3
 	goto	SetSyncHigh
 
-SyncLow:
+SetSyncLow:
 	movlw	0x30
 	movwf	T1CON
 	movlw	0xff
@@ -154,6 +154,16 @@ Tmr2Wait
 ;	Show a frame based on g_CurrentScene. Will increment g_FrameCounter
 ;******************************************************************************
 ShowFrame
+; Wait for VSYNC
+WaitForVSyncLow
+	btfsc	PORTC, 3
+	goto	WaitForVSyncLow
+; Clear screen color
+	clrf	PORTA
+WaitForVSyncHigh
+	btfss	PORTC, 3
+	goto	WaitForVSyncHigh
+
 	movlw	SceneRegistryStart
 	addwf	g_CurrentScene, w
 	btfsc	STATUS, C
@@ -247,7 +257,7 @@ u197
 	movwf	PORTA
 
 	; __delay_ms(15)
-	movlw	D'39'
+	movlw	D'29'
 	movwf	g_WaitCount2
 	movlw	D'245'
 	movwf	g_WaitCount1
@@ -257,44 +267,6 @@ u207
 	decfsz	g_WaitCount2, f
 	goto	u207
 
-	; __delay_us(350)
-	movlw	D'233'
-	movwf	g_WaitCount1
-u217:
-	decfsz	g_WaitCount2, f
-	goto	u217
-
-	clrf	PORTA
-
-	; __delay_us(32)
-	movlw	D'21'
-	movwf	g_WaitCount1
-u227:
-	decfsz	g_WaitCount1, f
-	goto	u227
-
-	; __delay_us(32)
-	movlw	D'21'
-	movwf	g_WaitCount1
-u237:
-	decfsz	g_WaitCount1, f
-	goto	u237
-
-	; __delay_us(32)
-	movlw	D'21'
-	movwf	g_WaitCount1
-u247:
-	decfsz	g_WaitCount1, f
-	goto	u247
-
-	; __delay_us(6)
-	movlw	D'3'
-	movwf	g_WaitCount1
-u257:
-	decfsz	g_WaitCount1, f
-	goto	u257
-	nop
-	nop
 	return
 
 	end
