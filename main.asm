@@ -181,26 +181,22 @@ SceneRegistryStart
 Scene0
 	movlw	0x01
 	movwf	g_ScreenColor
-	call	PrintSingleColorScreen
-	goto	EndFrame
+	goto	PrintSingleColorScreen
 
 Scene1
 	movlw	0x02
 	movwf	g_ScreenColor
-	call	PrintSingleColorScreen
-	goto	EndFrame
+	goto	PrintSingleColorScreen
 
 Scene2
 	movlw	0x04
 	movwf	g_ScreenColor
-	call	PrintSingleColorScreen
-	goto 	EndFrame
+	goto	PrintSingleColorScreen
 
 Scene3
 	movlw	0x07
 	movwf	g_ScreenColor
-	call	PrintSingleColorScreen
-	goto 	EndFrame
+	goto	PrintSingleColorScreen
 
 Scene4
 	goto 	EndFrame
@@ -236,36 +232,9 @@ SameScene
 	goto ShowFrame
 
 PrintSingleColorScreen
-	movlw	D'3'
-	movwf	g_WaitCount2
-	movlw	D'140'
-	movwf	g_WaitCount1
-u187
-	decfsz	g_WaitCount1, f
-	goto	u187
-	decfsz	g_WaitCount2, f
-	goto	u187
-
-	movlw	D'78'
-	movwf	g_WaitCount1
-u197
-	decfsz	g_WaitCount1, f
-	goto	u197
-
 	movf	g_ScreenColor, w
 	movwf	PORTA
 
-	; __delay_ms(15)
-	movlw	D'29'
-	movwf	g_WaitCount2
-	movlw	D'245'
-	movwf	g_WaitCount1
-u207
-	decfsz	g_WaitCount1, f
-	goto	u207
-	decfsz	g_WaitCount2, f
-	goto	u207
-
-	return
+	goto EndFrame
 
 	end
