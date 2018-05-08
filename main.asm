@@ -50,7 +50,7 @@ SetSyncHigh:
 	movlw	0xEF
 	banksel TMR1H
 	movwf	TMR1H
-	movlw	0xDF
+	movlw	0xE3
 	movwf	TMR1L
 	movlw	0x31
 	movwf	T1CON
@@ -111,7 +111,7 @@ OscillatorWait
 	banksel	T1CON
 	movwf	T1CON
 
-	movlw	0x3F
+	movlw	0x3E
 	banksel	PR2
 	movwf	PR2
 
@@ -119,12 +119,13 @@ OscillatorWait
 	banksel	CCP1CON
 	movwf	CCP1CON
 
-	movlw	0x07
+	movlw	0x08
 	banksel CCPR1L
 	movwf	CCPR1L
 
+	movlw	0x01
 	banksel	PWM1CON
-	clrf	PWM1CON
+	movwf	PWM1CON
 
 	banksel	PIR1
 	bcf	PIR1, TMR2IF
