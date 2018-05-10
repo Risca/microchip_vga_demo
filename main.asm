@@ -43,8 +43,12 @@ WaitForVSyncHigh
 	btfss	PORTC, 3
 	goto	WaitForVSyncHigh
 
+; Setup for next scene:
+; 1. Take address of SceneRegistryStart
 	movlw	SceneRegistryStart
+; 2. Add g_CurrentScene
 	addwf	g_CurrentScene, w
+; 3. Load into PC (take address overflow into account)
 	btfsc	STATUS, C
 	incf	PCLATH, f
 	movwf	PCL
