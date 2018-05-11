@@ -3,7 +3,6 @@ cblock	0x20
 	g_WaitCount2
 	g_FrameCounter
 	g_CurrentScene
-	g_ScreenColor
 endc
 
 ; w_temp and status_temp places last in GPR to be accessable in both banks

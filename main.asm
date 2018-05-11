@@ -17,32 +17,29 @@ reset_vector	code	0x000
 #include	"isr.asm"
 
 ;******************************************************************************
-; scene functions
-;	Include all scenes here
-;******************************************************************************
-#include "print_single_color.asm"
-
-;******************************************************************************
 ; Initialize
 ;	Initialize timers and outputs
 ;******************************************************************************
 #include "init.asm"
 
 ;******************************************************************************
-; ShowFrame
-;	Show a frame based on g_CurrentScene. Will increment g_FrameCounter
-;******************************************************************************
-ShowFrame
 ; Wait for VSYNC
-WaitForVSyncLow
+;	Busy waits for VSYNC negative pulse
+;******************************************************************************
+WaitForVSync
 	btfsc	PORTC, 3
-	goto	WaitForVSyncLow
+	goto	WaitForVSync
 ; Clear screen color
 	clrf	PORTA
 WaitForVSyncHigh
 	btfss	PORTC, 3
 	goto	WaitForVSyncHigh
 
+;******************************************************************************
+; ShowFrame
+;	Show a frame based on g_CurrentScene. Will increment g_FrameCounter
+;******************************************************************************
+ShowFrame
 ; Setup for next scene:
 ; 1. Take address of SceneRegistryStart
 	movlw	SceneRegistryStart
@@ -54,10 +51,11 @@ WaitForVSyncHigh
 	movwf	PCL
 SceneRegistryStart
 ; g_CurrentScene initializes to 5, next scene will then become 6 & 3 = 1
-	goto	PrintRedScreen
-	goto	PrintGreenScreen
-	goto	PrintBlueScreen
-	goto	PrintWhiteScreen
+	goto	BirdieScrollUp
+	goto	BirdieScrollDown
+	goto	BirdieScrollUp
+	goto	BirdieScrollDown
+	goto	BirdieNoScroll
 
 EndFrame:
 	movlw	D'60' ; 1 second
@@ -78,6 +76,14 @@ SameScene
 	nop
 	nop
 	incf	g_FrameCounter, f
-	goto ShowFrame
+	goto	ShowFrame
+
+;******************************************************************************
+; scene functions
+;	Include all scenes here
+;******************************************************************************
+;#include "print_single_color.asm"
+;#include "print_test_image.asm"
+#include "birdie.asm"
 
 	end

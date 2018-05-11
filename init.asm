@@ -1,8 +1,9 @@
 MAIN_PROG	code
 Initialize
 	; init variables
+	movlw	D'4'
+	movwf	g_CurrentScene
 	clrf	g_FrameCounter
-	clrf	g_CurrentScene
 
 	movlw	0x70
 	banksel	OSCCON
