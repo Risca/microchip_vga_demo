@@ -58,7 +58,14 @@ SceneRegistryStart
 	goto	BirdieNoScroll
 
 EndFrame:
-	movlw	D'60' ; 1 second
+	movlw	D'30'
+	xorwf	g_FrameCounter, w
+	btfss	STATUS, Z
+	goto	TurnOnAudio
+	goto	TurnOffAudio
+	
+EndFrameContinue
+	movlw	D'240'
 	xorwf	g_FrameCounter, w
 	btfss	STATUS, Z
 	goto	SameScene
@@ -77,6 +84,14 @@ SameScene
 	nop
 	incf	g_FrameCounter, f
 	goto	ShowFrame
+
+TurnOnAudio
+	nop
+	bsf	PORTC, 0
+	goto	EndFrameContinue
+TurnOffAudio
+	bcf	PORTC, 0
+	goto	EndFrameContinue
 
 ;******************************************************************************
 ; scene functions

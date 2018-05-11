@@ -23,11 +23,11 @@ OscillatorWait
 	banksel	PORTA
 	movwf	PORTA
 
-	movlw	0xF7
+	movlw	0xC6
 	banksel	TRISC
 	movwf	TRISC
 
-	movlw	0x08
+	movlw	0x09
 	banksel	PORTC
 	movwf	PORTC
 
@@ -70,10 +70,6 @@ OscillatorWait
 Tmr2Wait
 	btfss	PIR1, TMR2IF
 	goto	Tmr2Wait
-
-	movlw	0xC7
-	banksel	TRISC
-	movwf	TRISC
 
 	movlw	0xC0
 	banksel	INTCON
