@@ -53,46 +53,11 @@ WaitForVSyncHigh
 	incf	PCLATH, f
 	movwf	PCL
 SceneRegistryStart
-	goto	Scene0
-	goto	Scene1
-	goto	Scene2
-	goto	Scene3
-	goto	Scene4
-	goto	Scene5
-	goto	Scene6
-	goto	Scene7
-
-Scene0
-	movlw	0x01
-	movwf	g_ScreenColor
-	goto	PrintSingleColorScreen
-
-Scene1
-	movlw	0x02
-	movwf	g_ScreenColor
-	goto	PrintSingleColorScreen
-
-Scene2
-	movlw	0x04
-	movwf	g_ScreenColor
-	goto	PrintSingleColorScreen
-
-Scene3
-	movlw	0x07
-	movwf	g_ScreenColor
-	goto	PrintSingleColorScreen
-
-Scene4
-	goto 	EndFrame
-
-Scene5
-	goto 	EndFrame
-
-Scene6
-	goto 	EndFrame
-
-Scene7
-	goto 	EndFrame
+; g_CurrentScene initializes to 5, next scene will then become 6 & 3 = 1
+	goto	PrintRedScreen
+	goto	PrintGreenScreen
+	goto	PrintBlueScreen
+	goto	PrintWhiteScreen
 
 EndFrame:
 	movlw	D'60' ; 1 second
